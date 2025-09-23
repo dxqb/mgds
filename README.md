@@ -1,3 +1,19 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # MGDS
 
 MGDS is a custom dataset implementation for Pytorch that is built around the idea of a node based graph.
