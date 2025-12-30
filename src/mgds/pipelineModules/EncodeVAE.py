@@ -1,7 +1,7 @@
 from contextlib import nullcontext
 
 import torch
-from diffusers import AutoencoderKL, AutoencoderDC, AutoencoderKLQwenImage
+from diffusers import AutoencoderKL, AutoencoderDC, AutoencoderKLQwenImage, AutoencoderKLFlux2
 from diffusers.models.autoencoders.autoencoder_kl_hunyuan_video import AutoencoderKLHunyuanVideo
 
 from mgds.PipelineModule import PipelineModule
@@ -16,9 +16,10 @@ class EncodeVAE(
             self,
             in_name: str,
             out_name: str,
-            vae: AutoencoderKL | AutoencoderDC | AutoencoderKLHunyuanVideo | AutoencoderKLQwenImage,
+            vae: AutoencoderKL | AutoencoderDC | AutoencoderKLHunyuanVideo | AutoencoderKLQwenImage | AutoencoderKLFlux2,
             autocast_contexts: list[torch.autocast | None] = None,
             dtype: torch.dtype | None = None,
+            sample_mode: str = "sample",
     ):
         super(EncodeVAE, self).__init__()
         self.in_name = in_name
@@ -53,7 +54,7 @@ class EncodeVAE(
                     vae_output = self.vae.encode(image.unsqueeze(0))
                     if hasattr(vae_output, "latent_dist"):
                         output = vae_output.latent_dist
-                    if hasattr(vae_output, "latent"):
+                    if hasattr(vae_output, "latent"): #FIXME elif?
                         output = vae_output.latent.squeeze(dim=0)
                     break
             except RuntimeError:
